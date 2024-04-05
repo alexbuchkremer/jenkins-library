@@ -49,6 +49,9 @@ func runApiProxyUpload(config *apiProxyUploadOptions, telemetryData *telemetry.C
 
 	httpMethod := http.MethodPost
 	uploadApiProxyStatusURL := fmt.Sprintf("%s/apiportal/api/1.0/Transport.svc/APIProxies", serviceKey.OAuth.Host)
+	if config.VirtualHost != "" {
+		uploadApiProxyStatusURL = uploadApiProxyStatusURL + "?virtualhost=" + config.VirtualHost
+	}
 	header := make(http.Header)
 	header.Add("Accept", "application/zip")
 	fileContent, readError := fileUtils.FileRead(config.FilePath)

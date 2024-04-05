@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/SAP/jenkins-library/pkg/cpi"
 	piperhttp "github.com/SAP/jenkins-library/pkg/http"
@@ -36,6 +37,8 @@ func runApiProxyDownload(config *apiProxyDownloadOptions, telemetryData *telemet
 	if err != nil {
 		return err
 	}
+	clientOptions.TransportProxy, err = url.Parse(config.Proxy)
+	httpClient.SetOptions(clientOptions)
 	downloadArtifactURL := fmt.Sprintf("%s/apiportal/api/1.0/Transport.svc/APIProxies?name=%s", serviceKey.OAuth.Host, config.APIProxyName)
 	tokenParameters := cpi.TokenParameters{TokenURL: serviceKey.OAuth.OAuthTokenProviderURL,
 		Username: serviceKey.OAuth.ClientID, Password: serviceKey.OAuth.ClientSecret, Client: httpClient}
