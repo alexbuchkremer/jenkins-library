@@ -31,3 +31,11 @@ spec:
           - STAGES
           - STEPS
         mandatory: true
+      - name: virtualHost
+        type: string
+        description: Provide virtual host name for APIM
+        scope:
+          - PARAMETERS
+          - STAGES
+          - STEPS
+        mandatory: false

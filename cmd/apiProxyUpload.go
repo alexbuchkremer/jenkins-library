@@ -5,7 +5,9 @@ import (
 	b64 "encoding/base64"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
+	"os"
 
 	"github.com/SAP/jenkins-library/pkg/cpi"
 	piperhttp "github.com/SAP/jenkins-library/pkg/http"
@@ -44,11 +46,20 @@ func runApiProxyUpload(config *apiProxyUploadOptions, telemetryData *telemetry.C
 	if tokenErr != nil {
 		return errors.Wrap(tokenErr, "failed to fetch Bearer Token")
 	}
+	tmp, err := url.Parse(os.Getenv("HTTP_PROXY"))
+	if err != nil {
+		return err
+	} else {
+		clientOptions.TransportProxy = tmp
+	}
 	clientOptions.Token = fmt.Sprintf("Bearer %s", token)
 	httpClient.SetOptions(clientOptions)
 
 	httpMethod := http.MethodPost
 	uploadApiProxyStatusURL := fmt.Sprintf("%s/apiportal/api/1.0/Transport.svc/APIProxies", serviceKey.OAuth.Host)
+	if config.VirtualHost != "" {
+		uploadApiProxyStatusURL = uploadApiProxyStatusURL + "?virtualhost=" + config.VirtualHost
+	}
 	header := make(http.Header)
 	header.Add("Accept", "application/zip")
 	fileContent, readError := fileUtils.FileRead(config.FilePath)
