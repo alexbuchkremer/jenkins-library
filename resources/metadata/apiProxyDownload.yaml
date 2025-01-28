@@ -38,11 +38,3 @@ spec:
           - STAGES
           - STEPS
         mandatory: true
-      - name: proxy
-        type: string
-        description: Specifies http proxy to be used
-        scope:
-          - PARAMETERS
-          - STAGES
-          - STEPS
-        mandatory: false

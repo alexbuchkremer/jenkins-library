@@ -19,7 +19,6 @@ type apiProxyDownloadOptions struct {
 	APIServiceKey string `json:"apiServiceKey,omitempty"`
 	APIProxyName  string `json:"apiProxyName,omitempty"`
 	DownloadPath  string `json:"downloadPath,omitempty"`
-	Proxy         string `json:"proxy,omitempty"`
 }
 
 // ApiProxyDownloadCommand Download a specific API Proxy from the API Portal
@@ -125,7 +124,6 @@ func addApiProxyDownloadFlags(cmd *cobra.Command, stepConfig *apiProxyDownloadOp
 	cmd.Flags().StringVar(&stepConfig.APIServiceKey, "apiServiceKey", os.Getenv("PIPER_apiServiceKey"), "Service key JSON string to access the API Management Runtime service instance of plan 'api'")
 	cmd.Flags().StringVar(&stepConfig.APIProxyName, "apiProxyName", os.Getenv("PIPER_apiProxyName"), "Specifies the name of the API Proxy.")
 	cmd.Flags().StringVar(&stepConfig.DownloadPath, "downloadPath", os.Getenv("PIPER_downloadPath"), "Specifies api proxy download directory location. The file name should not be included in the path.")
-	cmd.Flags().StringVar(&stepConfig.Proxy, "proxy", os.Getenv("PIPER_proxy"), "Specifies http proxy to be used")
 
 	cmd.MarkFlagRequired("apiServiceKey")
 	cmd.MarkFlagRequired("apiProxyName")
@@ -178,15 +176,6 @@ func apiProxyDownloadMetadata() config.StepData {
 						Mandatory:   true,
 						Aliases:     []config.Alias{},
 						Default:     os.Getenv("PIPER_downloadPath"),
-					},
-					{
-						Name:        "proxy",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_proxy"),
 					},
 				},
 			},

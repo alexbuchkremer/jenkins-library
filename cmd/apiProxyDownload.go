@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"os"
 
 	"github.com/SAP/jenkins-library/pkg/cpi"
 	piperhttp "github.com/SAP/jenkins-library/pkg/http"
@@ -37,14 +38,18 @@ func runApiProxyDownload(config *apiProxyDownloadOptions, telemetryData *telemet
 	if err != nil {
 		return err
 	}
-	clientOptions.TransportProxy, err = url.Parse(config.Proxy)
-	httpClient.SetOptions(clientOptions)
 	downloadArtifactURL := fmt.Sprintf("%s/apiportal/api/1.0/Transport.svc/APIProxies?name=%s", serviceKey.OAuth.Host, config.APIProxyName)
 	tokenParameters := cpi.TokenParameters{TokenURL: serviceKey.OAuth.OAuthTokenProviderURL,
 		Username: serviceKey.OAuth.ClientID, Password: serviceKey.OAuth.ClientSecret, Client: httpClient}
 	token, err := cpi.CommonUtils.GetBearerToken(tokenParameters)
 	if err != nil {
 		return errors.Wrap(err, "failed to fetch Bearer Token")
+	}
+	tmp, err := url.Parse(os.Getenv("HTTP_PROXY"))
+	if err != nil {
+		return err
+	} else {
+		clientOptions.TransportProxy = tmp
 	}
 	clientOptions.Token = fmt.Sprintf("Bearer %s", token)
 	httpClient.SetOptions(clientOptions)

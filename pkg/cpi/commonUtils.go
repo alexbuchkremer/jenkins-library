@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"net/url"
 
 	"github.com/SAP/jenkins-library/pkg/log"
 
@@ -85,6 +86,12 @@ func (tokenParameters TokenParameters) GetBearerToken() (string, error) {
 	clientOptions := piperhttp.ClientOptions{
 		Username: tokenParameters.Username,
 		Password: tokenParameters.Password,
+	}
+	tmp, err := url.Parse(os.Getenv("HTTP_PROXY"))
+	if err != nil {
+		return "Environment variable HTTP_PROXY must be set", err
+	} else {
+		clientOptions.TransportProxy = tmp
 	}
 	httpClient.SetOptions(clientOptions)
 
